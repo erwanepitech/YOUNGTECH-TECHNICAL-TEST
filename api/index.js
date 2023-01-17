@@ -9,10 +9,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
 
 var corsOptions = {
-    origin: "http://localhost:8081"
+    origin: "*"
 };
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 // parse requests of content-type - application/json
 app.use(express.json());

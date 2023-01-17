@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class FormScreen extends StatefulWidget {
   const FormScreen({Key? key}) : super(key: key);
@@ -15,6 +17,7 @@ class FormScreenState extends State<FormScreen> {
   String _password = "";
   bool _isHidden = true;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final uri = 'http://10.0.2.2:8080/api/auth/signup';
 
   Widget _buildName() {
     return TextFormField(
@@ -56,6 +59,29 @@ class FormScreenState extends State<FormScreen> {
     setState(() {
       _isHidden = !_isHidden;
     });
+  }
+
+  void _sendForm() async {
+    var map = new Map<String, dynamic>();
+    map['username'] = _username;
+    map['email'] = _email;
+    map['password'] = _password;
+
+    http.Response response = await http.post(
+      Uri.parse(uri),
+      headers: <String, String>{
+        'Content-Type':
+        'application/x-www-form-urlencoded; charset=UTF-8',
+      },
+      body: map,
+    );
+
+    if (response.statusCode == 200) {
+      print(jsonDecode(response.body));
+    } else {
+      Map<String, dynamic> map = jsonDecode(response.body);
+      print(map['message']);
+    }
   }
 
   Widget _buildPassword() {
@@ -108,6 +134,8 @@ class FormScreenState extends State<FormScreen> {
                       print(_username);
                       print(_email);
                       print(_password);
+
+                      _sendForm();
                     }
                     //Send to API
                   },
