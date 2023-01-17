@@ -64,25 +64,66 @@ class LoginScreenScreenState extends State<LoginScreen> {
   }
 
   void _sendForm() async {
-    var map = new Map<String, dynamic>();
+    var map = Map<String, dynamic>();
     map['username'] = _username;
     map['password'] = _password;
 
     http.Response response = await http.post(
       Uri.parse(uri),
       headers: <String, String>{
-        'Content-Type':
-        'application/x-www-form-urlencoded; charset=UTF-8',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       },
       body: map,
     );
 
     if (response.statusCode == 200) {
-      print(jsonDecode(response.body));
-    } else {
+      // to do redirect to qrcode scan page
       Map<String, dynamic> map = jsonDecode(response.body);
-      print(map['message']);
+      map['message'] = "success";
+      map['username'] = map['username'];
+      map['email'] = map['email'];
+      _showDialog(context, map);
+      print(jsonDecode(response.body));
+    } else if (response.statusCode == 404) {
+      Map<String, dynamic> map = jsonDecode(response.body);
+      map['message'] = "error";
+      map['content'] = map['message'];
+      _showDialog(context, map);
+    } else if (response.statusCode == 401) {
+      Map<String, dynamic> map = jsonDecode(response.body);
+      map['message'] = "error";
+      map['content'] = map['message'];
+      _showDialog(context, map);
+    } else {
+      map['message'] = "error";
+      map['content'] = "sorry try again later";
+      _showDialog(context, map);
     }
+  }
+
+  void _showDialog(BuildContext context, Map map) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(map["message"]),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(map["username"]),
+                Text(map["email"]),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('ok'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:youngtech_test/views/login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -84,7 +85,7 @@ class RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
-  void _sendForm() async {
+  void _sendForm(BuildContext context) async {
     var map = new Map<String, dynamic>();
     map['username'] = _username;
     map['email'] = _email;
@@ -100,11 +101,44 @@ class RegisterScreenState extends State<RegisterScreen> {
     );
 
     if (response.statusCode == 200) {
-      print(jsonDecode(response.body));
-    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    } else if (response.statusCode == 404) {
       Map<String, dynamic> map = jsonDecode(response.body);
-      print(map['message']);
+      map['error'] = "error";
+      map['content'] = map['message'];
+      _showDialog(context, map);
+    } else if (response.statusCode == 401) {
+      Map<String, dynamic> map = jsonDecode(response.body);
+      map['error'] = "error";
+      map['content'] = map['message'];
+      _showDialog(context, map);
+    } else {
+      map['error'] = "error";
+      map['content'] = "sorry try again later";
+      _showDialog(context, map);
     }
+  }
+
+  void _showDialog(BuildContext context, Map map) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(map["error"]),
+            content: Text(map["content"]),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('ok'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   @override
@@ -135,7 +169,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                       print(_email);
                       print(_password);
 
-                      _sendForm();
+                      _sendForm(context);
                     }
                     //Send to API
                   },
