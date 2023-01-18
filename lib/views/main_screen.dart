@@ -25,6 +25,7 @@ class MainScreenState extends State<MainScreen> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _token = prefs.getString('token').toString();
+      print(_token);
     });
   }
 
@@ -36,13 +37,11 @@ class MainScreenState extends State<MainScreen> {
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
-      Navigator.of(context).pop(context);
     } else {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
-      Navigator.of(context).pop(context);
     }
   }
 
