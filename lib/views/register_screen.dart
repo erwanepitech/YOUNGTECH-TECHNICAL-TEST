@@ -101,22 +101,22 @@ class RegisterScreenState extends State<RegisterScreen> {
     );
 
     if (response.statusCode == 200) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-      );
+      Map<String, dynamic> map = jsonDecode(response.body);
+      map['status'] = "success";
+      map['content'] = map['message'];
+      _showDialog(context, map);
     } else if (response.statusCode == 404) {
       Map<String, dynamic> map = jsonDecode(response.body);
-      map['error'] = "error";
+      map['status'] = "error";
       map['content'] = map['message'];
       _showDialog(context, map);
     } else if (response.statusCode == 401) {
       Map<String, dynamic> map = jsonDecode(response.body);
-      map['error'] = "error";
+      map['status'] = "error";
       map['content'] = map['message'];
       _showDialog(context, map);
     } else {
-      map['error'] = "error";
+      map['status'] = "error";
       map['content'] = "sorry try again later";
       _showDialog(context, map);
     }
@@ -127,13 +127,19 @@ class RegisterScreenState extends State<RegisterScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text(map["error"]),
+            title: Text(map["status"]),
             content: Text(map["content"]),
             actions: <Widget>[
               TextButton(
                 child: const Text('ok'),
                 onPressed: () {
                   Navigator.of(context).pop();
+                  if (map["status"] == "success") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    );
+                  }
                 },
               ),
             ],
@@ -165,10 +171,6 @@ class RegisterScreenState extends State<RegisterScreen> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      print(_username);
-                      print(_email);
-                      print(_password);
-
                       _sendForm(context);
                     }
                     //Send to API

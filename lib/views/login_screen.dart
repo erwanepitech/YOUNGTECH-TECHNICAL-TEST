@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:youngtech_test/views/main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -67,6 +69,7 @@ class LoginScreenScreenState extends State<LoginScreen> {
     var map = Map<String, dynamic>();
     map['username'] = _username;
     map['password'] = _password;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
     http.Response response = await http.post(
       Uri.parse(uri),
@@ -82,8 +85,15 @@ class LoginScreenScreenState extends State<LoginScreen> {
       map['message'] = "success";
       map['username'] = map['username'];
       map['email'] = map['email'];
-      _showDialog(context, map);
-      print(jsonDecode(response.body));
+
+      prefs.setString('token', map['accessToken']);
+
+      //print(prefs.getString('token'));
+      // _showDialog(context, map);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const MainScreen()),
+      );
     } else if (response.statusCode == 404) {
       Map<String, dynamic> map = jsonDecode(response.body);
       map['message'] = "error";
@@ -149,9 +159,6 @@ class LoginScreenScreenState extends State<LoginScreen> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      print(_username);
-                      print(_password);
-
                       _sendForm();
                     }
                     //Send to API
