@@ -13,8 +13,14 @@ module.exports = function (app) {
   app.get("/api/test/all", controller.allAccess);
 
   app.get(
-    "/api/test/user",
+    "/api/user",
     [authJwt.verifyToken],
     controller.userBoard
+  );
+
+  app.get(
+    "/api/user/:id",
+    [authJwt.verifyToken],
+    controller.getUser
   );
 };
