@@ -18,7 +18,7 @@ class LoginScreenScreenState extends State<LoginScreen> {
   String _password = "";
   bool _isHidden = true;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final uri = 'http://10.0.2.2:8080/api/auth/signin';
+  final uri = 'http://192.168.1.82:8080/api/auth/signin';
 
   Widget _buildName() {
     return TextFormField(

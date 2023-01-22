@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youngtech_test/page/settings.dart';
 import 'package:youngtech_test/page/qr_code.dart';
+import 'package:youngtech_test/page/qr_code_scanner.dart';
 
 class NavDrawer extends StatelessWidget {
   const NavDrawer({Key? key}) : super(key: key);
@@ -20,8 +21,16 @@ class NavDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
+            leading: Icon(Icons.qr_code_scanner),
+            title: Text('Scan Qr-code'),
+            onTap: () => { Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => QRScannerScreen()),
+            )},
+          ),
+          ListTile(
             leading: Icon(Icons.qr_code_2),
-            title: Text('Qr-code'),
+            title: Text('My Qr-code'),
             onTap: () => { Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => QrCodeScreen()),

@@ -35,7 +35,7 @@ class QrCodeScreenState extends State<QrCodeScreen> {
     });
   }
 
-  void getId() async {
+  getId() async {
     http.Response response = await http.get(
       Uri.parse(uri),
       headers: <String, String>{
@@ -44,9 +44,16 @@ class QrCodeScreenState extends State<QrCodeScreen> {
       },
     );
     Map<String, dynamic> data = jsonDecode(response.body);
-    print(data["id"].toString());
     _id = data["id"].toString();
-    print(_token);
+  }
+
+  Widget _Qr() {
+    return QrImage(
+      data: 'http://10.0.2.2:8080/api/user/$_id',
+      version: QrVersions.auto,
+      size: 320,
+      gapless: false,
+    );
   }
 
   @override
@@ -60,12 +67,7 @@ class QrCodeScreenState extends State<QrCodeScreen> {
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                QrImage(
-                  data: 'http://10.0.2.2:8080/api/user/$_id',
-                  version: QrVersions.auto,
-                  size: 320,
-                  gapless: false,
-                )
+                _Qr()
               ]
           ),
         )

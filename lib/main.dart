@@ -1,6 +1,7 @@
 import 'package:youngtech_test/views/register_screen.dart';
 import 'package:youngtech_test/views/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:youngtech_test/page/qr_code_scanner.dart';
 
 void main() => runApp(MyApp());
 
